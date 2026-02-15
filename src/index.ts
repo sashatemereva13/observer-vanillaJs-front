@@ -1,5 +1,6 @@
 import express from "express"
 import path from "path"
+import { EventEmitter } from "events"
 // import { attach, detach, notify } from "./domain/observers/Subject"
 // import {
 // 	virusScanObserver,
@@ -13,6 +14,26 @@ import path from "path"
 const app = express()
 const PORT = 3000
 
+// The Subject — uses Node.js built-in EventEmitter (pub/sub)
+const subject = new EventEmitter()
+
+// observer (subscriber)
+
+const testObserver = (phrase: string) => {
+	console.log(phrase + " observer received event")
+}
+
+subject.on("FileUploaded", testObserver)
+
+// subject.off("FileUploaded", testObserver)
+
+// Observer: reacts when "FileUploaded" is emitted
+// subject.on("FileUploaded", (data: { fileName: string; fileSize: number }) => {
+// 	console.log(
+// 		`📝 Observer received event: ${data.fileName} (${data.fileSize} bytes)`,
+// 	)
+// })
+
 // Middleware
 app.use(express.json())
 
@@ -21,6 +42,7 @@ app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "views/index.html"))
 })
 
+// TODO: attach all observers (PAY ATTENTION TO THE FOLDER STRUCTURE !)
 // Attach all observers to the subject on startup
 // attach("VirusScanner", virusScanObserver)
 // attach("ThumbnailGenerator", thumbnailObserver)
@@ -29,21 +51,17 @@ app.get("/", (req, res) => {
 // attach("ActivityLogger", activityLogObserver)
 
 // Simulated file upload endpoint
-app.post("/upload", async (req, res) => {
-	console.log("\n📁 FILE UPLOAD EVENT TRIGGERED")
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-	console.log(`📄 File:  some file ...`)
-	console.log(`📏 Size: 777 bytes`)
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-
-	// Subject notifies all attached observers
-	// const event = createFileUploadedEvent(fileName, fileSize)
-	// await notify(event)
-
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-	console.log("✨ All observers notified!")
-	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-
+app.post("/upload", (req, res) => {
+	subject.emit("FileUploaded", "test")
+	// console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	// console.log(`📄 File:  some file ...`)
+	// console.log(`📏 Size: 777 bytes`)
+	// console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+	// // Subject emits the event — all observers subscribed to "FileUploaded" will react
+	// subject.emit("FileUploaded", { fileName: "some file", fileSize: 777 })
+	// console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	// console.log(" observers notified of the event")
+	// console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 	res.json({
 		success: true,
 		message: "File upload simulated",
