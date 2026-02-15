@@ -12,15 +12,14 @@ const PORT = 3000
 // Middleware
 app.use(express.json()) // to parse JSON request bodies
 
-
 app.get("/", (req: Request, res: Response) => {
 	res.json({ message: "Hello from the server!" })
 })
 
 app.listen(PORT, () => {
 	console.log("╔══════════════════════════════════════════════╗")
-	console.log("║   Observer Pattern Demo Simple and nice!        ║")
-	console.log("║   Node.js + TypeScript + Express            ║")
+	console.log("║   Observer Pattern Demo Simple and nice!     ║")
+	console.log("║   Node.js + TypeScript + Express             ║")
 	console.log("╚══════════════════════════════════════════════╝")
 	console.log(`\n🚀 Server running at http://localhost:${PORT}`)
 })
