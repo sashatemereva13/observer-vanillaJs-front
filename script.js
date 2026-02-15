@@ -10,11 +10,11 @@ const statusBadge = document.querySelector("#status")
 const toggleButtons = [
 	document.querySelector("#toggle-observer-1"),
 	document.querySelector("#toggle-observer-2"),
-	document.querySelector("#toggle-observer-3")
+	document.querySelector("#toggle-observer-3"),
 ]
 
 // Helper function to create delay for educational purposes
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // Helper function to log activity visually
 let clickCount = 0
@@ -22,20 +22,27 @@ let logEntryCount = 0
 function logActivity(message, type = "info", codeRef = null) {
 	logEntryCount++
 	const timestamp = new Date().toLocaleTimeString()
-	const badgeClass = type === "success" ? "bg-success" :
-	                    type === "primary" ? "bg-primary" :
-	                    type === "warning" ? "bg-warning" :
-	                    type === "danger" ? "bg-danger" :
-	                    "bg-info"
+	const badgeClass =
+		type === "success"
+			? "bg-success"
+			: type === "primary"
+				? "bg-primary"
+				: type === "warning"
+					? "bg-warning"
+					: type === "danger"
+						? "bg-danger"
+						: "bg-info"
 
 	// Add code reference if provided
-	const codeSnippet = codeRef ? `
+	const codeSnippet = codeRef
+		? `
 		<div class="mt-1">
 			<small class="text-muted font-monospace">
 				📄 script.js:${codeRef.line} → <code>${codeRef.code}</code>
 			</small>
 		</div>
-	` : ""
+	`
+		: ""
 
 	const logEntry = `
 		<div class="mb-2 pb-2 border-bottom" id="log-${logEntryCount}">
@@ -61,10 +68,13 @@ const notifyUser = () => {
 	logActivity(
 		"🔔 <strong>Observer 1:</strong> notifyUser() executing - Showing alert...",
 		"success",
-		{ line: 62, code: 'alert("Thank you for your purchase!")' }
+		{ line: 67, code: 'alert("Thank you for your purchase!")' },
 	)
 	alert("Thank you for your purchase!")
-	logActivity("✅ <strong>Observer 1:</strong> Alert acknowledged by user", "success")
+	logActivity(
+		"✅ <strong>Observer 1:</strong> Alert acknowledged by user",
+		"success",
+	)
 }
 
 // Observer 2: Log transaction to console
@@ -74,19 +84,19 @@ const logTransaction = () => {
 	logActivity(
 		"📝 <strong>Observer 2:</strong> logTransaction() executed - Logged to console",
 		"primary",
-		{ line: 69, code: 'console.log("Transaction processed at: " + timestamp)' }
+		{ line: 69, code: 'console.log("Transaction processed at: " + timestamp)' },
 	)
 }
 
 // Observer 3: Update UI status (added for demonstration)
 const updateStatus = () => {
 	statusBadge.innerHTML = `
-		<span class="badge bg-success">✓ Observers Notified (${clickCount} time${clickCount > 1 ? 's' : ''})</span>
+		<span class="badge bg-success">✓ Observers Notified (${clickCount} time${clickCount > 1 ? "s" : ""})</span>
 	`
 	logActivity(
 		"🔄 <strong>Observer 3:</strong> updateStatus() executed - UI badge updated",
 		"info",
-		{ line: 75, code: 'statusBadge.innerHTML = "✓ Observers Notified..."' }
+		{ line: 75, code: 'statusBadge.innerHTML = "✓ Observers Notified..."' },
 	)
 }
 
@@ -96,11 +106,13 @@ const updateStatus = () => {
 const observers = [
 	{ name: "notifyUser", func: notifyUser, subscribed: true },
 	{ name: "logTransaction", func: logTransaction, subscribed: true },
-	{ name: "updateStatus", func: updateStatus, subscribed: true }
+	{ name: "updateStatus", func: updateStatus, subscribed: true },
 ]
 
 console.log("📌 Registering observers to the subject...")
-console.log("✅ Three observers registered: notifyUser, logTransaction, updateStatus")
+console.log(
+	"✅ Three observers registered: notifyUser, logTransaction, updateStatus",
+)
 
 // Function to update toggle button appearance
 function updateToggleButton(index) {
@@ -125,11 +137,16 @@ toggleButtons.forEach((button, index) => {
 		const action = observers[index].subscribed ? "subscribed" : "unsubscribed"
 		const emoji = observers[index].subscribed ? "✅" : "❌"
 
-		console.log(`${emoji} Observer ${index + 1} (${observers[index].name}) ${action}`)
+		console.log(
+			`${emoji} Observer ${index + 1} (${observers[index].name}) ${action}`,
+		)
 		logActivity(
 			`${emoji} <strong>Observer ${index + 1}</strong> has been ${action}`,
 			observers[index].subscribed ? "success" : "danger",
-			{ line: 110, code: 'observers[index].subscribed = !observers[index].subscribed' }
+			{
+				line: 110,
+				code: "observers[index].subscribed = !observers[index].subscribed",
+			},
 		)
 	})
 })
@@ -138,7 +155,7 @@ toggleButtons.forEach((button, index) => {
 async function handlePurchaseClick() {
 	// Disable button during execution to prevent multiple clicks
 	purchaseButton.disabled = true
-	purchaseButton.innerHTML = '⏳ Processing...'
+	purchaseButton.innerHTML = "⏳ Processing..."
 
 	clickCount++
 
@@ -146,9 +163,11 @@ async function handlePurchaseClick() {
 	logActivity(
 		"🎯 <strong>CLICK EVENT DETECTED</strong> - Subject beginning to notify observers...",
 		"warning",
-		{ line: 125, code: 'async function handlePurchaseClick() { ... }' }
+		{ line: 155, code: "async function handlePurchaseClick() { ... }" },
 	)
-	console.log(`\n🎯 Click #${clickCount} - Subject notifying ${observers.length} observers...`)
+	console.log(
+		`\n🎯 Click #${clickCount} - Subject notifying ${observers.length} observers...`,
+	)
 
 	await delay(750) // Educational delay
 
@@ -159,7 +178,7 @@ async function handlePurchaseClick() {
 		logActivity(
 			`📢 <strong>Subject:</strong> Checking Observer ${i + 1} (${observer.name})...`,
 			"warning",
-			{ line: 148, code: 'if (observer.subscribed) { ... }' }
+			{ line: 188, code: "if (observer.subscribed) { ... }" },
 		)
 		console.log(`📢 Checking Observer ${i + 1} (${observer.name})...`)
 
@@ -168,18 +187,17 @@ async function handlePurchaseClick() {
 		// Check if observer is subscribed
 		if (observer.subscribed) {
 			// Execute the observer
-			logActivity(
-				`▶️ <strong>Executing:</strong> ${observer.name}()`,
-				"info",
-				{ line: 150, code: 'observer.func()' }
-			)
+			logActivity(`▶️ <strong>Executing:</strong> ${observer.name}()`, "info", {
+				line: 150,
+				code: "observer.func()",
+			})
 			observer.func()
 		} else {
 			// Observer is unsubscribed - skip execution
 			logActivity(
 				`⊘ <strong>Observer ${i + 1}:</strong> NOT SUBSCRIBED - Skipped execution`,
 				"danger",
-				{ line: 148, code: 'if (observer.subscribed) { ... } else { skip }' }
+				{ line: 148, code: "if (observer.subscribed) { ... } else { skip }" },
 			)
 			console.log(`⊘ Observer ${i + 1} not subscribed - skipped`)
 		}
@@ -194,13 +212,13 @@ async function handlePurchaseClick() {
 	logActivity(
 		"✨ <strong>Complete:</strong> All observers have been notified and executed!",
 		"warning",
-		{ line: 139, code: 'for (let i = 0; i < observers.length; i++) { ... }' }
+		{ line: 139, code: "for (let i = 0; i < observers.length; i++) { ... }" },
 	)
 	console.log("✨ All observers notified!\n")
 
 	// Re-enable button
 	purchaseButton.disabled = false
-	purchaseButton.innerHTML = '🛒 Purchase Now'
+	purchaseButton.innerHTML = "🛒 Purchase Now"
 }
 
 // Attach our custom handler to the button

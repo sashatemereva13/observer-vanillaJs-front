@@ -2,25 +2,39 @@
 
 Comparing the Observer Pattern to addEventListener in vanilla JavaScript is an excellent pedagogical simplification. In fact, addEventListener is one of the most widely used real-world implementations of this pattern.
 
+## Pattern Flow
+
+![Observer Pattern Flow](flow.png)
+
 ## 1. The Roles
 
 - **The Subject** (The Node/Element): In addEventListener, the DOM element or Node (like a button or window) acts as the Subject. It is the "Broadcaster" that holds the potential for an event (like a 'click') to happen.
 
-- **The Observer** (The Callback Function): The function you pass into addEventListener is the Observer. It waits for the Subject to trigger a change and then executes its logic.
+- **The Observers** (The Callback Functions): The functions registered in the observers array act as the Observers. Each waits for the Subject to trigger a change and then executes its logic. In this demo, there are three observers:
+  - `notifyUser()` — Shows a browser alert to the user
+  - `logTransaction()` — Logs the transaction timestamp to the console
+  - `updateStatus()` — Updates the UI status badge on the page
 
 ## 2. The Communication Lifecycle
 
-- **Subscription:** When you call element.addEventListener('click', callback), you are performing the Registration phase. You are adding that callback to the Subject's internal registry of listeners.
+- **Subscription:** When you call `element.addEventListener('click', callback)`, you are performing the Registration phase. In this demo, the observers are registered in an array of objects, each containing the observer's name, function reference, and a `subscribed` boolean flag:
+  ```javascript
+  const observers = [
+      { name: "notifyUser", func: notifyUser, subscribed: true },
+      { name: "logTransaction", func: logTransaction, subscribed: true },
+      { name: "updateStatus", func: updateStatus, subscribed: true },
+  ]
+  ```
 
-- **Notification:** When the event occurs, the Subject "iterates through its registry" and triggers every callback function associated with that event type. This ensures Automatic Synchronization—everyone listening is updated instantly.
+- **Notification:** When the purchase button is clicked, the `handlePurchaseClick()` function iterates through the observers array with a 750ms educational delay between each. For each observer, it checks the `subscribed` flag—if `true`, the observer's function executes; if `false`, it is skipped.
 
-- **Unsubscription:** Using element.removeEventListener('click', callback) allows the observer to detach at runtime. This is crucial for Memory Management; if you don't detach these listeners, you risk the "Lapsed Listener Problem," where objects stay in memory longer than necessary.
+- **Unsubscription:** In the standard DOM API, you use `element.removeEventListener('click', callback)` to detach an observer. In this demo, unsubscription is simulated using toggle buttons that flip each observer's `subscribed` flag to `false`, allowing the Subject to skip them during notification without removing them from the registry. This is crucial for Memory Management; if you don't detach listeners in production code, you risk the "Lapsed Listener Problem," where objects stay in memory longer than necessary.
 
 ## 3. Why the Comparison Works
 
 - **Decoupled Communication:** The button doesn't need to know what your function does (e.g., whether it saves data to a database or just changes a CSS color). It only knows that it must call that function when the event happens.
 
-- **One-to-Many Dependency:** You can attach five different addEventListener calls to the same single button. When clicked, that one Subject notifies all five Observers simultaneously
+- **One-to-Many Dependency:** You can attach five different addEventListener calls to the same single button. When clicked, that one Subject notifies all five Observers simultaneously. In this demo, the single purchase button notifies three observers sequentially (with delays for visibility).
 
 ### A Small Technical Nuance
 
@@ -43,9 +57,11 @@ This pattern is a great starting point for understanding how to use the Observer
 After exploring the interactive demo, answer these questions to test your understanding of the Observer Pattern:
 
 ### 1. Unsubscription Behavior
+
 **Question:** Unsubscribe from Observer 1 (notifyUser) using the toggle button, then click "Purchase Now". What happens differently? Why doesn't the alert appear anymore?
 
 <details>
+
 <summary>💡 Click to reveal answer</summary>
 
 When Observer 1 is unsubscribed, the Subject checks the observer's `subscribed` status before executing it. Since `subscribed` is `false`, the Subject skips that observer entirely and shows "NOT SUBSCRIBED - Skipped execution" instead. The alert doesn't appear because the `notifyUser()` function is never called, even though it still exists in the observers registry. This demonstrates **Dynamic Management** - observers can be removed at runtime without breaking the system.
@@ -53,6 +69,7 @@ When Observer 1 is unsubscribed, the Subject checks the observer's `subscribed` 
 </details>
 
 ### 2. Complete Unsubscription
+
 **Question:** What happens if you unsubscribe from ALL three observers and then click "Purchase Now"? Does the button still work? What does this tell you about the Subject's role?
 
 <details>
@@ -63,6 +80,7 @@ The button still works perfectly! You'll see messages like "Checking Observer 1.
 </details>
 
 ### 3. The 750ms Delay
+
 **Question:** The demo includes a 750ms delay between each observer notification. What would happen if we removed this delay? Why was it added? How does this relate to real-world `addEventListener`?
 
 <details>
@@ -73,6 +91,7 @@ Without the delay, all three observers would execute almost instantly (within mi
 </details>
 
 ### 4. Observer Independence
+
 **Question:** Observer 1 shows an alert (which blocks execution until you click "OK"), Observer 2 logs to console, and Observer 3 updates the UI. If Observer 1 is subscribed, why do Observers 2 and 3 have to "wait" for you to close the alert before they execute?
 
 <details>
@@ -83,6 +102,7 @@ JavaScript is **single-threaded**, meaning only one operation can execute at a t
 </details>
 
 ### 5. Adding a New Observer
+
 **Question:** How would you add a 4th observer called `sendEmail()` that logs "Email sent!" to the console? What changes would you need to make to the code, and where would you need to modify both the HTML and JavaScript files?
 
 <details>
