@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>File Upload Observer Pattern Demo</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+			crossorigin="anonymous"
+		/>
+	</head>
+	<body class="bg-light">
+		<div class="container py-5">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<h1 class="mb-3">File Upload Observer Pattern Demo</h1>
+					<p class="text-muted">Node.js + TypeScript + Express — Simulation</p>
+
+					<div class="card mb-4">
+						<div class="card-body text-center">
+							<p class="card-text mb-3">Click the button to simulate a file upload and trigger all observers. Check the server console for output.</p>
+							<button class="btn btn-primary btn-lg" id="send-btn">
+								Send data to server
+							</button>
+						</div>
+					</div>
+
+					<div id="result" class="d-none">
+						<div class="alert" id="result-alert" role="alert"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			const sendBtn = document.getElementById("send-btn")
+			const resultDiv = document.getElementById("result")
+			const resultAlert = document.getElementById("result-alert")
+
+			sendBtn.addEventListener("click", async () => {
+				sendBtn.disabled = true
+				sendBtn.textContent = "Sending..."
+
+				try {
+					const res = await fetch("/upload", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ fileName: "simulation.jpg", fileSize: 2048000 }),
+					})
+
+					const data = await res.json()
+
+					resultDiv.classList.remove("d-none")
+
+					if (data.success) {
+						resultAlert.className = "alert alert-success"
+						resultAlert.textContent = data.message
+					} else {
+						resultAlert.className = "alert alert-danger"
+						resultAlert.textContent = data.error || "Upload failed"
+					}
+				} catch (err) {
+					resultDiv.classList.remove("d-none")
+					resultAlert.className = "alert alert-danger"
+					resultAlert.textContent = "Network error: " + err.message
+				} finally {
+					sendBtn.disabled = false
+					sendBtn.textContent = "Send data to server"
+				}
+			})
+		</script>
+	</body>
+</html>
