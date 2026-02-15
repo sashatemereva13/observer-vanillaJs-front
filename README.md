@@ -1,117 +1,444 @@
-# Observer Pattern — File Upload Processing Pipeline
+# Observer Pattern Demo - File Upload Processing
 
-A Node.js + TypeScript demo that implements the Observer Pattern in a realistic server-side context: a file upload processing pipeline with an activity log.
+A simple Node.js + TypeScript + Express application demonstrating the **Observer Pattern** through a simulated file upload processing pipeline.
 
-## Why the Observer Pattern?
+## 🎯 What is the Observer Pattern?
 
-JavaScript is inherently event-driven. The `addEventListener` in the DOM, reactive frameworks like Vue and React, and libraries like RxJS all build on the same core idea: **when something changes, notify everyone who cares**.
+The Observer Pattern is a behavioral design pattern where an object (the **Subject**) maintains a list of dependents (the **Observers**) and notifies them automatically when something happens.
 
-The Observer Pattern formalizes this with two roles:
+**Real-world analogy:** YouTube subscriptions
 
-- **Subject (Observable)** — holds state and broadcasts changes to registered listeners
-- **Observer** — reacts to those changes via an `update` method
+- You (Observer) subscribe to a channel (Subject)
+- When the channel uploads a video (Event), you get notified
+- You can unsubscribe anytime
 
-This decoupling means the Subject doesn't need to know _what_ its Observers do — only that they exist. Observers can be added or removed at runtime without touching the Subject's code.
+## 🏗️ Architecture
 
-## What This Project Does
+This demo uses a **functional programming approach** with factory functions instead of classes.
 
-A file upload server with two parts:
+### Key Components
 
-**Already provided:**
-- Express server with file upload (Multer) and JSON persistence
-- Frontend with upload form and image preview grid
-- Domain entities, value objects, and event types
+1. **Subject** (`Subject.ts`)
+   - Maintains the list of observers
+   - Provides `attach()` and `detach()` methods
+   - Broadcasts events via `notify()`
 
-**Your task — add the Observer Pattern:**
-- Implement the **Subject** (subscribe, unsubscribe, notify)
-- Implement the **Activity Log Observer** that logs every upload to `data/activity.json`
-- Wire the observer into the upload handler
-- Display the activity timeline on the frontend
+2. **Observer** (`Observer.ts`)
+   - Type definition for observer functions
+   - Each observer is an async function that reacts to events
 
-## Goals
+3. **Event** (`FileUploadedEvent.ts`)
+   - Data structure representing "something happened"
+   - Contains: fileName, fileSize, uploadedAt timestamp
 
-- Demonstrate the Observer Pattern in a real server-side scenario
-- Show TypeScript's value for enforcing pattern contracts via interfaces
-- Produce observable side effects (files created, logs written) so the pattern's behavior is visible
+4. **Concrete Observers** (`observers.ts`)
+   - Virus Scanner - Simulates antivirus scanning
+   - Thumbnail Generator - Simulates image thumbnail creation
+   - Metadata Extractor - Simulates metadata extraction
+   - Email Notifier - Simulates sending email notifications
+   - Activity Logger - Logs upload activity
 
-## Prerequisites
-
-- **Node.js** >= 18
-- **npm**
-
-## Tech Stack
-
-- **Express** — web server and routing
-- **Multer** — middleware for handling file uploads
-- **TypeScript** — type safety and interfaces
-- **ts-node** / **nodemon** — development tooling
-
-## Project Structure
+## 📊 Flow Diagram
 
 ```
-src/
-  index.ts                          # Express server (entry point)
-  domain/
-    entities/
-      UploadedFile.ts               # File entity with status management
-    value-objects/
-      UploadId.ts, FileName.ts,     # Domain value objects
-      FileSize.ts, MimeType.ts
-    events/
-      FileUploadedEvent.ts          # Domain events
-      ThumbnailGeneratedEvent.ts
-      FileScanCompletedEvent.ts
-    observers/
-      Observer.ts                   # Observer interface (update method)
-      Subject.ts                    # Subject class (subscribe/unsubscribe/notify)
-      ActivityLogObserver.ts        # Concrete observer: logs uploads to JSON
-views/
-  index.html                        # Frontend with upload form + activity timeline
-data/                               # Runtime JSON storage (gitignored)
-uploads/                            # Uploaded files (gitignored)
-docs/
-  spec.md                           # Observer Pattern theory
-  todo.md                           # Step-by-step student tasks (with hints)
+┌─────────────────────────────────────────────────────────────────┐
+│                     APPLICATION STARTUP                         │
+│                                                                 │
+│  1. Server starts                                              │
+│  2. All observers attach() to Subject                          │
+│     ├─ VirusScanner ✅                                         │
+│     ├─ ThumbnailGenerator ✅                                   │
+│     ├─ MetadataExtractor ✅                                    │
+│     ├─ EmailNotifier ✅                                        │
+│     └─ ActivityLogger ✅                                       │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    FILE UPLOAD REQUEST                          │
+│                                                                 │
+│  POST /upload                                                   │
+│  Body: { fileName: "vacation.jpg", fileSize: 2048000 }        │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   CREATE FILE UPLOADED EVENT                    │
+│                                                                 │
+│  FileUploadedEvent {                                           │
+│    fileName: "vacation.jpg",                                   │
+│    fileSize: 2048000,                                          │
+│    uploadedAt: Date                                            │
+│  }                                                             │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   SUBJECT NOTIFIES OBSERVERS                    │
+│                                                                 │
+│  Subject.notify(event) broadcasts to ALL attached observers    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                ┌─────────────┴─────────────┐
+                │                           │
+                ▼                           ▼
+    ┌────────────────────┐      ┌────────────────────┐
+    │  🛡️ Virus Scanner  │      │ 🖼️ Thumbnail Gen   │
+    │                    │      │                    │
+    │  - Logs "Scanning" │      │  - Logs "Processing"│
+    │  - Delay 1000ms    │      │  - Delay 800ms     │
+    │  - Logs "✅ Clean"  │      │  - Logs "✅ Created"│
+    └────────────────────┘      └────────────────────┘
+                │                           │
+                │         ┌─────────────────┴──────────┐
+                │         │                            │
+                ▼         ▼                            ▼
+    ┌────────────────────┐         ┌────────────────────┐
+    │ 📊 Metadata Extract│         │ 📧 Email Notifier  │
+    │                    │         │                    │
+    │ - Logs "Reading"   │         │ - Logs "Sending"   │
+    │ - Delay 500ms      │         │ - Delay 600ms      │
+    │ - Logs "✅ Extracted"│        │ - Logs "✅ Sent"    │
+    └────────────────────┘         └────────────────────┘
+                │                            │
+                └──────────┬─────────────────┘
+                           │
+                           ▼
+                ┌────────────────────┐
+                │ 📝 Activity Logger │
+                │                    │
+                │ - Logs details     │
+                │ - Delay 200ms      │
+                │ - Logs "✅ Logged"  │
+                └────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    ALL OBSERVERS COMPLETE                       │
+│                                                                 │
+│  Return response: { success: true }                            │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Getting Started
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm or yarn
+
+### Installation
 
 ```bash
+# Install dependencies
 npm install
-npm run dev    # development with auto-reload
-npm start      # single run
+
+# Run in development mode (with auto-reload)
+npm run dev
+
+# Or build and run production
+npm run build
+npm start
 ```
 
-The server will be available at **http://localhost:3000**
+The server will start on `http://localhost:3000`
 
-## Student TODO
+## 📡 API Endpoints
 
-Follow these steps in order. Each one maps to TODO comments and commented-out code in the source files.
+### 1. Upload a File (Trigger Observer Pattern)
 
-### 1. Implement the Subject (`src/domain/observers/Subject.ts`)
-- [ ] `subscribe(observer)` — add the observer to the internal array
-- [ ] `unsubscribe(observer)` — remove the observer from the array
-- [ ] `notify(eventName, data)` — call `update()` on every registered observer
+**POST** `/upload`
 
-### 2. Implement the Activity Log Observer (`src/domain/observers/ActivityLogObserver.ts`)
-- [ ] `readLog()` — read and parse `data/activity.json`
-- [ ] `writeLog(entries)` — write the entries array back to the file
-- [ ] `update(eventName, data)` — build a log entry, read the log, push, write
-- [ ] `getActivityLog()` — return all log entries
+Simulates a file upload and triggers all attached observers.
 
-### 3. Wire the Observer in the server (`src/index.ts`)
-- [ ] Create a `Subject` instance and subscribe the `ActivityLogObserver`
-- [ ] Call `notify("FileUploaded", fileData)` in the upload handler
-- [ ] Uncomment the `GET /activity` route
+**Request Body:**
 
-### 4. Frontend activity timeline (`views/index.html`)
-- [ ] Implement `loadActivity()` — fetch `/activity` and render each entry
-- [ ] Call `loadActivity()` after a successful upload
+```json
+{
+	"fileName": "vacation.jpg",
+	"fileSize": 2048000
+}
+```
 
-### 5. Verify
-- [ ] `npm run dev`, upload a file, check the file grid
-- [ ] Confirm `data/activity.json` was created with a log entry
-- [ ] Confirm the activity timeline renders on the page
-- [ ] Upload a second file and confirm the timeline updates
+**Response:**
 
-> Full details with code hints are in [docs/todo.md](docs/todo.md)
+```json
+{
+	"success": true,
+	"message": "File upload processed",
+	"fileName": "vacation.jpg",
+	"fileSize": 2048000
+}
+```
+
+**Example with curl:**
+
+```bash
+curl -X POST http://localhost:3000/upload \
+  -H "Content-Type: application/json" \
+  -d '{"fileName": "vacation.jpg", "fileSize": 2048000}'
+```
+
+### 2. Detach an Observer
+
+**POST** `/detach/:observer`
+
+Dynamically unsubscribe an observer from the Subject.
+
+**Available observers:** `virus`, `thumbnail`, `metadata`, `email`, `activity`
+
+**Example:**
+
+```bash
+# Detach email notifier
+curl -X POST http://localhost:3000/detach/email
+
+# Now upload again - email observer won't trigger
+curl -X POST http://localhost:3000/upload \
+  -H "Content-Type: application/json" \
+  -d '{"fileName": "document.pdf", "fileSize": 512000}'
+```
+
+**Response:**
+
+```json
+{
+	"success": true,
+	"detached": "email"
+}
+```
+
+### 3. Reattach an Observer
+
+**POST** `/attach/:observer`
+
+Resubscribe a previously detached observer.
+
+**Example:**
+
+```bash
+# Reattach email notifier
+curl -X POST http://localhost:3000/attach/email
+```
+
+**Response:**
+
+```json
+{
+	"success": true,
+	"attached": "email"
+}
+```
+
+## 📋 Expected Console Output
+
+When you trigger a file upload, you'll see:
+
+```
+📁 FILE UPLOAD EVENT TRIGGERED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 File: vacation.jpg
+📏 Size: 2048000 bytes
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔔 Subject notifying all observers...
+
+🛡️  Virus Scanner: Scanning vacation.jpg...
+🛡️  Virus Scanner: ✅ Clean
+
+🖼️  Thumbnail Generator: Processing vacation.jpg...
+🖼️  Thumbnail Generator: ✅ Thumbnail created
+
+📊 Metadata Extractor: Reading vacation.jpg...
+📊 Metadata Extractor: ✅ Metadata extracted
+
+📧 Email Notifier: Sending notification for vacation.jpg...
+📧 Email Notifier: ✅ Email sent
+
+📝 Activity Logger: Logging upload of vacation.jpg (2048000 bytes)
+📝 Activity Logger: ✅ Logged at 2024-02-15T10:30:00.000Z
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✨ All observers notified!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+After detaching the email observer:
+
+```
+❌ EmailNotifier detached from subject
+```
+
+Next upload will skip the email observer:
+
+```
+📁 FILE UPLOAD EVENT TRIGGERED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 File: document.pdf
+📏 Size: 512000 bytes
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔔 Subject notifying all observers...
+
+🛡️  Virus Scanner: Scanning document.pdf...
+🛡️  Virus Scanner: ✅ Clean
+
+🖼️  Thumbnail Generator: Processing document.pdf...
+🖼️  Thumbnail Generator: ✅ Thumbnail created
+
+📊 Metadata Extractor: Reading document.pdf...
+📊 Metadata Extractor: ✅ Metadata extracted
+
+📝 Activity Logger: Logging upload of document.pdf (512000 bytes)
+📝 Activity Logger: ✅ Logged at 2024-02-15T10:31:00.000Z
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✨ All observers notified!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Notice: Email Notifier did NOT execute!
+```
+
+## 🎓 Learning Objectives
+
+### 1. **Loose Coupling**
+
+Each observer is independent. The virus scanner doesn't know the thumbnail generator exists. They only know about the `FileUploadedEvent`.
+
+### 2. **Dynamic Subscription**
+
+Observers can be attached/detached at runtime without modifying the Subject or other observers.
+
+### 3. **One-to-Many Relationship**
+
+One event (file upload) triggers multiple reactions (scan, thumbnail, email, etc.) automatically.
+
+### 4. **Separation of Concerns**
+
+Each observer has a single responsibility:
+
+- Virus scanner → security
+- Thumbnail → image processing
+- Email → notifications
+- Metadata → data extraction
+- Activity log → audit trail
+
+### 5. **EventEmitter Pattern**
+
+Node.js's built-in `EventEmitter` is a production-ready implementation of the Observer pattern. This demo wraps it in a cleaner interface.
+
+## 🧪 Experiment Ideas
+
+Try these to deepen understanding:
+
+1. **Add a new observer**
+   - Create `databaseObserver` in `observers.ts`
+   - Attach it in `index.ts`
+   - See it automatically trigger on uploads
+
+2. **Create observer dependencies**
+   - Make thumbnail generator only run if virus scan is clean
+   - Requires checking results or using event chaining
+
+3. **Add priority/ordering**
+   - Ensure virus scanner always runs first
+   - Implement priority queue instead of EventEmitter
+
+4. **Measure performance**
+   - Log execution time for each observer
+   - Compare sequential vs parallel execution
+
+5. **Error handling**
+   - Make an observer throw an error
+   - See how it affects other observers
+   - Implement error isolation
+
+## 📁 Project Structure
+
+```
+/src
+  /domain
+    /entities
+      UploadedFile.ts      # (Optional - not used in simple version)
+    /events
+      FileUploadedEvent.ts # The event that triggers observers
+      index.ts
+    /observers
+      Observer.ts          # Observer type definition
+      Subject.ts           # Subject implementation (EventEmitter wrapper)
+      observers.ts         # Concrete observer implementations
+    /value-objects
+      UploadId.ts          # (Optional - not used in simple version)
+      index.ts
+  index.ts                 # Express app + wiring
+package.json
+tsconfig.json
+README.md
+spec.md
+```
+
+## 🔍 Key Files Explained
+
+### `Subject.ts`
+
+The broadcaster that maintains the observer list and notifies them.
+
+**Key methods:**
+
+- `attach(name, observer)` - Subscribe an observer
+- `detach(name, observer)` - Unsubscribe an observer
+- `notify(event)` - Broadcast event to all observers
+
+### `Observer.ts`
+
+Type definition: `Observer = (event: FileUploadedEvent) => Promise<void>`
+
+### `observers.ts`
+
+Contains all concrete observer implementations:
+
+- Each is an async function
+- Takes `FileUploadedEvent` as parameter
+- Simulates work with delays
+- Logs progress to console
+
+### `FileUploadedEvent.ts`
+
+The event data structure with factory function.
+
+### `index.ts`
+
+Express server that:
+
+1. Attaches all observers on startup
+2. Provides endpoints to trigger pattern
+3. Allows runtime attach/detach
+
+## 🎯 Use Cases in Real Applications
+
+This pattern is used everywhere:
+
+1. **E-commerce:** Order placed → send email, update inventory, trigger shipping, log analytics
+2. **Social Media:** User posts → notify followers, update timeline, trigger moderation, save to DB
+3. **File Uploads:** Upload complete → scan for viruses, generate thumbnails, extract metadata, backup to cloud
+4. **Monitoring:** Error occurs → log to file, send alert email, update metrics, notify Slack
+5. **Game Development:** Player levels up → update UI, play sound, save progress, unlock achievements
+
+## 📚 Further Reading
+
+- [Observer Pattern - Refactoring Guru](https://refactoring.guru/design-patterns/observer)
+- [Node.js EventEmitter Documentation](https://nodejs.org/api/events.html)
+- [Design Patterns: Elements of Reusable Object-Oriented Software](https://en.wikipedia.org/wiki/Design_Patterns) (Gang of Four)
+
+## 🤝 Contributing
+
+This is an educational project. Feel free to:
+
+- Add more observers
+- Improve logging
+- Add test files
+- Create variations (parallel execution, priority queues, etc.)
+
+## 📝 License
+
+MIT - Use freely for educational purposes
