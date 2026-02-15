@@ -7,6 +7,11 @@
 const purchaseButton = document.querySelector("#buy-btn")
 const activityLog = document.querySelector("#activity-log")
 const statusBadge = document.querySelector("#status")
+const toggleButtons = [
+	document.querySelector("#toggle-observer-1"),
+	document.querySelector("#toggle-observer-2"),
+	document.querySelector("#toggle-observer-3")
+]
 
 // Helper function to create delay for educational purposes
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -17,7 +22,11 @@ let logEntryCount = 0
 function logActivity(message, type = "info") {
 	logEntryCount++
 	const timestamp = new Date().toLocaleTimeString()
-	const badgeClass = type === "success" ? "bg-success" : type === "primary" ? "bg-primary" : type === "warning" ? "bg-warning" : "bg-info"
+	const badgeClass = type === "success" ? "bg-success" :
+	                    type === "primary" ? "bg-primary" :
+	                    type === "warning" ? "bg-warning" :
+	                    type === "danger" ? "bg-danger" :
+	                    "bg-info"
 
 	const logEntry = `
 		<div class="mb-2" id="log-${logEntryCount}">
@@ -62,10 +71,45 @@ const updateStatus = () => {
 // 3. SUBSCRIPTION (The Registration)
 // We 'attach' our observers to the subject.
 // The observers array simulates the internal registry that addEventListener maintains.
-const observers = [notifyUser, logTransaction, updateStatus]
+const observers = [
+	{ name: "notifyUser", func: notifyUser, subscribed: true },
+	{ name: "logTransaction", func: logTransaction, subscribed: true },
+	{ name: "updateStatus", func: updateStatus, subscribed: true }
+]
 
 console.log("📌 Registering observers to the subject...")
 console.log("✅ Three observers registered: notifyUser, logTransaction, updateStatus")
+
+// Function to update toggle button appearance
+function updateToggleButton(index) {
+	const observer = observers[index]
+	const button = toggleButtons[index]
+
+	if (observer.subscribed) {
+		button.className = "btn btn-success btn-sm w-100"
+		button.innerHTML = `✓ Observer ${index + 1}: Subscribed`
+	} else {
+		button.className = "btn btn-outline-danger btn-sm w-100"
+		button.innerHTML = `✗ Observer ${index + 1}: Unsubscribed`
+	}
+}
+
+// Add click handlers to toggle buttons
+toggleButtons.forEach((button, index) => {
+	button.addEventListener("click", () => {
+		observers[index].subscribed = !observers[index].subscribed
+		updateToggleButton(index)
+
+		const action = observers[index].subscribed ? "subscribed" : "unsubscribed"
+		const emoji = observers[index].subscribed ? "✅" : "❌"
+
+		console.log(`${emoji} Observer ${index + 1} (${observers[index].name}) ${action}`)
+		logActivity(
+			`${emoji} <strong>Observer ${index + 1}</strong> has been ${action}`,
+			observers[index].subscribed ? "success" : "danger"
+		)
+	})
+})
 
 // Custom click handler that demonstrates the Observer Pattern with educational delays
 async function handlePurchaseClick() {
@@ -83,13 +127,25 @@ async function handlePurchaseClick() {
 
 	// Iterate through observers and execute each with a delay
 	for (let i = 0; i < observers.length; i++) {
-		logActivity(`📢 <strong>Subject:</strong> Notifying Observer ${i + 1}...`, "warning")
-		console.log(`📢 Notifying Observer ${i + 1}...`)
+		const observer = observers[i]
+
+		logActivity(`📢 <strong>Subject:</strong> Checking Observer ${i + 1} (${observer.name})...`, "warning")
+		console.log(`📢 Checking Observer ${i + 1} (${observer.name})...`)
 
 		await delay(750) // Delay before executing observer
 
-		// Execute the observer
-		observers[i]()
+		// Check if observer is subscribed
+		if (observer.subscribed) {
+			// Execute the observer
+			observer.func()
+		} else {
+			// Observer is unsubscribed - skip execution
+			logActivity(
+				`⊘ <strong>Observer ${i + 1}:</strong> NOT SUBSCRIBED - Skipped execution`,
+				"danger"
+			)
+			console.log(`⊘ Observer ${i + 1} not subscribed - skipped`)
+		}
 
 		// Delay after execution (except for the last one before re-enabling)
 		if (i < observers.length - 1) {
