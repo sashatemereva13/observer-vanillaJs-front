@@ -1,4 +1,4 @@
-## Core Concept
+# Observer Pattern with Node.js and Typescript
 
 The Observer Pattern is a behavioral design pattern that defines a one-to-many dependency between objects. When one object (the Subject) changes its state, all its dependents (Observers) are notified and updated automatically.
 
@@ -18,7 +18,6 @@ Interface: It implements a specific method (often called update or notify) that 
 
 Reaction: It executes logic in response to the new data provided by the Subject.
 
-
 ## The Communication Lifecycle
 
 Subscription (Registration):
@@ -31,7 +30,7 @@ Event / State Change:
 
 Something happens within the Subject (e.g., data is fetched, a button is clicked, a timer expires).
 
-## The Notification (Broadcast):
+## The Notification (Broadcast)
 
 The Subject iterates through its list of subscribers.
 
@@ -56,3 +55,14 @@ Event-Driven Architecture: JavaScript relies heavily on this pattern. The addEve
 Asynchronous Handling: It is foundational for handling asynchronous operations, where the result isn't available immediately.
 
 Reactive Programming: Modern libraries (like RxJS) and frameworks (like Vue.js or React's state management) are built upon advanced versions of this pattern.
+
+## Project Goals
+
+This demo aims to:
+
+✅ Show the Observer Pattern in a realistic server-side context
+✅ Demonstrate TypeScript's benefits for pattern implementation
+✅ Provide observable side effects (files created, logs written)
+✅ Illustrate both educational (sequential) and production (parallel) execution
+✅ Enable hands-on experimentation with toggleable observers
+✅ Bridge the gap between academic pattern theory and real-world application
