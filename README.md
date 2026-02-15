@@ -11,7 +11,7 @@ The Observer Pattern formalizes this with two roles:
 - **Subject (Observable)** — holds state and broadcasts changes to registered listeners
 - **Observer** — reacts to those changes via an `update` method
 
-This decoupling means the Subject doesn't need to know *what* its Observers do — only that they exist. Observers can be added or removed at runtime without touching the Subject's code.
+This decoupling means the Subject doesn't need to know _what_ its Observers do — only that they exist. Observers can be added or removed at runtime without touching the Subject's code.
 
 ## What This Project Does
 
@@ -39,6 +39,13 @@ Each observer is independent and toggleable, demonstrating how the pattern enabl
 - **Express** — HTTP server and file upload handling
 - **Sharp** — image thumbnail generation
 - **ts-node** / **nodemon** — development tooling
+
+### What each does:
+
+- Express - Web server framework
+- Multer - Middleware for handling file uploads
+- Cors - Enable CORS for frontend access
+- @types/\* - TypeScript type definitions
 
 ## Getting Started
 
