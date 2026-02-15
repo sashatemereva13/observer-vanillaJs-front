@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Observer Pattern Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="mb-3">File Upload Observer Pattern Demo</h1>
+                <p class="text-muted">Node.js + TypeScript + Express</p>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Upload a file</h5>
+                        <form id="upload-form" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <input class="form-control" type="file" name="file" id="file-input" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="upload-btn">Upload</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="result" class="d-none">
+                    <div class="alert" id="result-alert" role="alert"></div>
+                </div>
+
+                <h5 class="mt-4 mb-3">Uploaded Files</h5>
+                <div id="files-list" class="row g-3"></div>
+
+                <!-- =========================================================
+                     Activity Timeline
+                     This section displays the activity log populated by the
+                     Observer Pattern. Once the backend observer is working,
+                     each upload will produce a log entry shown here.
+                     ========================================================= -->
+                <h5 class="mt-5 mb-3">Activity Log</h5>
+                <div id="activity-log">
+                    <p class="text-muted">No activity yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("upload-form");
+        const resultDiv = document.getElementById("result");
+        const resultAlert = document.getElementById("result-alert");
+        const filesList = document.getElementById("files-list");
+        const uploadBtn = document.getElementById("upload-btn");
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return "0 Bytes";
+            const k = 1024;
+            const sizes = ["Bytes", "KB", "MB", "GB"];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+        }
+
+        function createFileCard(file) {
+            const col = document.createElement("div");
+            col.className = "col-sm-6 col-md-4";
+
+            const isImage = file.mimetype.startsWith("image/");
+            const imgHtml = isImage
+                ? '<img src="/uploads/' + file.filename + '" class="card-img-top" alt="' + file.originalName + '">'
+                : '';
+
+            col.innerHTML =
+                '<div class="card h-100">' +
+                    imgHtml +
+                    '<div class="card-body">' +
+                        '<h6 class="card-title text-truncate" title="' + file.originalName + '">' + file.originalName + '</h6>' +
+                        '<p class="card-text small text-muted mb-1">' + formatBytes(file.size) + '</p>' +
+                        '<p class="card-text small text-muted">' + file.mimetype + '</p>' +
+                    '</div>' +
+                '</div>';
+
+            return col;
+        }
+
+        async function loadFiles() {
+            try {
+                const res = await fetch("/files");
+                const files = await res.json();
+                filesList.innerHTML = "";
+                files.forEach(function(file) {
+                    filesList.appendChild(createFileCard(file));
+                });
+            } catch (err) {
+                console.error("Failed to load files:", err);
+            }
+        }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = "Uploading...";
+
+            try {
+                const res = await fetch("/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await res.json();
+
+                resultDiv.classList.remove("d-none");
+
+                if (data.success) {
+                    resultAlert.className = "alert alert-success";
+                    resultAlert.textContent = data.message;
+                    filesList.prepend(createFileCard(data.file));
+                    // TODO: Call loadActivity() here to refresh the timeline after upload
+                    // loadActivity();
+                } else {
+                    resultAlert.className = "alert alert-danger";
+                    resultAlert.textContent = data.error || "Upload failed";
+                }
+            } catch (err) {
+                resultDiv.classList.remove("d-none");
+                resultAlert.className = "alert alert-danger";
+                resultAlert.textContent = "Network error: " + err.message;
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = "Upload";
+                form.reset();
+            }
+        });
+
+        // =================================================================
+        // Activity Log
+        // =================================================================
+        // TODO: Implement loadActivity()
+        // 1. Fetch GET /activity to get the array of log entries
+        // 2. If the array is empty, show "No activity yet."
+        // 3. Otherwise, build a Bootstrap list-group with one item per entry
+        //    showing the message and a formatted timestamp
+        // =================================================================
+
+        const activityLog = document.getElementById("activity-log");
+
+        async function loadActivity() {
+            // TODO: fetch("/activity"), parse JSON, and render each entry
+            // Each entry has: timestamp, eventName, message, metadata
+            //
+            // Example rendering per entry:
+            //   <li class="list-group-item">
+            //     <strong>message</strong>
+            //     <small class="text-muted float-end">formatted timestamp</small>
+            //   </li>
+            console.log("loadActivity() called — TODO: fetch /activity and render entries");
+        }
+
+        loadFiles();
+        loadActivity();
+    </script>
+</body>
+</html>

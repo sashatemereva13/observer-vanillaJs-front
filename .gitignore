@@ -8,3 +8,11 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+# uploads - keep folder, ignore contents
+uploads/*
+!uploads/.gitkeep
+
+# data - keep folder, ignore contents
+data/*
+!data/.gitkeep
