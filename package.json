@@ -1,37 +1,37 @@
 {
-  "name": "observer-vanillajs-front",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/web-rest-api/observer-vanillaJs-front.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/web-rest-api/observer-vanillaJs-front/issues"
-  },
-  "homepage": "https://github.com/web-rest-api/observer-vanillaJs-front#readme",
-  "dependencies": {
-    "express": "^5.2.1",
-    "mime-types": "^3.0.2",
-    "sharp": "^0.34.5"
-  },
-  "devDependencies": {
-    "@types/mime-types": "^3.0.1",
-    "@types/node": "^25.2.3",
-    "nodemon": "^3.1.11",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
-  }
+	"name": "observer-vanillajs-front",
+	"version": "1.0.0",
+	"description": "Show the Observer Pattern in a realistic server-side context",
+	"main": "index.js",
+	"directories": {
+		"doc": "docs"
+	},
+	"scripts": {
+		"start": "ts-node src/index.ts",
+		"dev": "nodemon --exec ts-node src/index.ts",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/web-rest-api/observer-vanillaJs-front.git"
+	},
+	"keywords": [],
+	"author": "martin p (lostmart)",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/web-rest-api/observer-vanillaJs-front/issues"
+	},
+	"homepage": "https://github.com/web-rest-api/observer-vanillaJs-front#readme",
+	"dependencies": {
+		"express": "^5.2.1",
+		"mime-types": "^3.0.2",
+		"sharp": "^0.34.5"
+	},
+	"devDependencies": {
+		"@types/mime-types": "^3.0.1",
+		"@types/node": "^25.2.3",
+		"nodemon": "^3.1.11",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.9.3"
+	}
 }

@@ -56,6 +56,17 @@ Asynchronous Handling: It is foundational for handling asynchronous operations, 
 
 Reactive Programming: Modern libraries (like RxJS) and frameworks (like Vue.js or React's state management) are built upon advanced versions of this pattern.
 
+## For this project
+
+**Processing Pipeline:**
+The Subject: A file upload event The Observers:
+
+- Virus scanner (simulated)
+- Thumbnail generator (for images)
+- Metadata extractor
+  Database logger
+- Email notification sender
+
 ## Project Goals
 
 This demo aims to:
