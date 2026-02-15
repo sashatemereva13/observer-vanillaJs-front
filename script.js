@@ -19,7 +19,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 // Helper function to log activity visually
 let clickCount = 0
 let logEntryCount = 0
-function logActivity(message, type = "info") {
+function logActivity(message, type = "info", codeRef = null) {
 	logEntryCount++
 	const timestamp = new Date().toLocaleTimeString()
 	const badgeClass = type === "success" ? "bg-success" :
@@ -28,10 +28,20 @@ function logActivity(message, type = "info") {
 	                    type === "danger" ? "bg-danger" :
 	                    "bg-info"
 
+	// Add code reference if provided
+	const codeSnippet = codeRef ? `
+		<div class="mt-1">
+			<small class="text-muted font-monospace">
+				📄 script.js:${codeRef.line} → <code>${codeRef.code}</code>
+			</small>
+		</div>
+	` : ""
+
 	const logEntry = `
-		<div class="mb-2" id="log-${logEntryCount}">
+		<div class="mb-2 pb-2 border-bottom" id="log-${logEntryCount}">
 			<span class="badge ${badgeClass}">${timestamp}</span>
 			<span class="ms-2">${message}</span>
+			${codeSnippet}
 		</div>
 	`
 
@@ -48,7 +58,11 @@ function logActivity(message, type = "info") {
 
 // Observer 1: Notify the user
 const notifyUser = () => {
-	logActivity("🔔 <strong>Observer 1:</strong> notifyUser() executing - Showing alert...", "success")
+	logActivity(
+		"🔔 <strong>Observer 1:</strong> notifyUser() executing - Showing alert...",
+		"success",
+		{ line: 62, code: 'alert("Thank you for your purchase!")' }
+	)
 	alert("Thank you for your purchase!")
 	logActivity("✅ <strong>Observer 1:</strong> Alert acknowledged by user", "success")
 }
@@ -57,7 +71,11 @@ const notifyUser = () => {
 const logTransaction = () => {
 	const timestamp = new Date()
 	console.log("📝 Transaction processed at: " + timestamp)
-	logActivity("📝 <strong>Observer 2:</strong> logTransaction() executed - Logged to console", "primary")
+	logActivity(
+		"📝 <strong>Observer 2:</strong> logTransaction() executed - Logged to console",
+		"primary",
+		{ line: 69, code: 'console.log("Transaction processed at: " + timestamp)' }
+	)
 }
 
 // Observer 3: Update UI status (added for demonstration)
@@ -65,7 +83,11 @@ const updateStatus = () => {
 	statusBadge.innerHTML = `
 		<span class="badge bg-success">✓ Observers Notified (${clickCount} time${clickCount > 1 ? 's' : ''})</span>
 	`
-	logActivity("🔄 <strong>Observer 3:</strong> updateStatus() executed - UI badge updated", "info")
+	logActivity(
+		"🔄 <strong>Observer 3:</strong> updateStatus() executed - UI badge updated",
+		"info",
+		{ line: 75, code: 'statusBadge.innerHTML = "✓ Observers Notified..."' }
+	)
 }
 
 // 3. SUBSCRIPTION (The Registration)
@@ -106,7 +128,8 @@ toggleButtons.forEach((button, index) => {
 		console.log(`${emoji} Observer ${index + 1} (${observers[index].name}) ${action}`)
 		logActivity(
 			`${emoji} <strong>Observer ${index + 1}</strong> has been ${action}`,
-			observers[index].subscribed ? "success" : "danger"
+			observers[index].subscribed ? "success" : "danger",
+			{ line: 110, code: 'observers[index].subscribed = !observers[index].subscribed' }
 		)
 	})
 })
@@ -120,7 +143,11 @@ async function handlePurchaseClick() {
 	clickCount++
 
 	// Log the event trigger
-	logActivity("🎯 <strong>CLICK EVENT DETECTED</strong> - Subject beginning to notify observers...", "warning")
+	logActivity(
+		"🎯 <strong>CLICK EVENT DETECTED</strong> - Subject beginning to notify observers...",
+		"warning",
+		{ line: 125, code: 'async function handlePurchaseClick() { ... }' }
+	)
 	console.log(`\n🎯 Click #${clickCount} - Subject notifying ${observers.length} observers...`)
 
 	await delay(750) // Educational delay
@@ -129,7 +156,11 @@ async function handlePurchaseClick() {
 	for (let i = 0; i < observers.length; i++) {
 		const observer = observers[i]
 
-		logActivity(`📢 <strong>Subject:</strong> Checking Observer ${i + 1} (${observer.name})...`, "warning")
+		logActivity(
+			`📢 <strong>Subject:</strong> Checking Observer ${i + 1} (${observer.name})...`,
+			"warning",
+			{ line: 148, code: 'if (observer.subscribed) { ... }' }
+		)
 		console.log(`📢 Checking Observer ${i + 1} (${observer.name})...`)
 
 		await delay(750) // Delay before executing observer
@@ -137,12 +168,18 @@ async function handlePurchaseClick() {
 		// Check if observer is subscribed
 		if (observer.subscribed) {
 			// Execute the observer
+			logActivity(
+				`▶️ <strong>Executing:</strong> ${observer.name}()`,
+				"info",
+				{ line: 150, code: 'observer.func()' }
+			)
 			observer.func()
 		} else {
 			// Observer is unsubscribed - skip execution
 			logActivity(
 				`⊘ <strong>Observer ${i + 1}:</strong> NOT SUBSCRIBED - Skipped execution`,
-				"danger"
+				"danger",
+				{ line: 148, code: 'if (observer.subscribed) { ... } else { skip }' }
 			)
 			console.log(`⊘ Observer ${i + 1} not subscribed - skipped`)
 		}
@@ -154,7 +191,11 @@ async function handlePurchaseClick() {
 	}
 
 	await delay(750)
-	logActivity("✨ <strong>Complete:</strong> All observers have been notified and executed!", "warning")
+	logActivity(
+		"✨ <strong>Complete:</strong> All observers have been notified and executed!",
+		"warning",
+		{ line: 139, code: 'for (let i = 0; i < observers.length; i++) { ... }' }
+	)
 	console.log("✨ All observers notified!\n")
 
 	// Re-enable button
