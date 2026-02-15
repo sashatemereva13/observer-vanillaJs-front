@@ -59,32 +59,32 @@ function writeLog(entries: LogEntry[]): void {
 }
 
 // =============================================================================
-// STEP 4: Implement the ActivityLogObserver class
-// It must implement the Observer interface (the update method).
-// When update() is called:
+// STEP 4: Implement the activityLogObserver function
+// This is an Observer function (not a class). When called:
 //   1. Build a LogEntry object from the event data
 //   2. Read the existing log
 //   3. Push the new entry
 //   4. Write the updated log back to disk
 // =============================================================================
 
-export class ActivityLogObserver implements Observer {
-	update(eventName: string, data: Record<string, unknown>): void {
-		// TODO: Create a LogEntry with:
-		//   - timestamp: new Date().toISOString()
-		//   - eventName: the eventName parameter
-		//   - message: build a string like "File <originalName> was uploaded (size bytes)"
-		//     using data.originalName and data.size
-		//   - metadata: the data parameter
+export const activityLogObserver: Observer = (
+	eventName: string,
+	data: Record<string, unknown>,
+): void => {
+	// TODO: Create a LogEntry with:
+	//   - timestamp: new Date().toISOString()
+	//   - eventName: the eventName parameter
+	//   - message: build a string like "File <originalName> was uploaded (size bytes)"
+	//     using data.originalName and data.size
+	//   - metadata: the data parameter
 
-		// TODO: Read existing log entries with readLog()
+	// TODO: Read existing log entries with readLog()
 
-		// TODO: Push the new entry to the array
+	// TODO: Push the new entry to the array
 
-		// TODO: Write the updated array with writeLog()
+	// TODO: Write the updated array with writeLog()
 
-		console.log(`[ActivityLogObserver] update("${eventName}") called — TODO: create log entry and persist it`)
-	}
+	console.log(`[activityLogObserver] called with "${eventName}" — TODO: create log entry and persist it`)
 }
 
 // =============================================================================

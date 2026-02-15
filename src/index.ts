@@ -13,23 +13,22 @@ export * from "./domain/events/ThumbnailGeneratedEvent"
 export * from "./domain/events/FileScanCompletedEvent"
 export * from "./domain/observers/Observer"
 export * from "./domain/observers/Subject"
-export * from "./domain/observers/ActivityLogObserver"
+export { activityLogObserver, getActivityLog } from "./domain/observers/ActivityLogObserver"
 
-import { Subject } from "./domain/observers/Subject"
-import { ActivityLogObserver, getActivityLog } from "./domain/observers/ActivityLogObserver"
+import { createSubject } from "./domain/observers/Subject"
+import { activityLogObserver, getActivityLog } from "./domain/observers/ActivityLogObserver"
 
 // =============================================================================
 // OBSERVER SETUP
-// Create a Subject instance (the event emitter) and subscribe the
-// ActivityLogObserver to it so it gets notified on every upload.
+// Create a Subject using the factory function and subscribe the
+// activityLogObserver function so it gets notified on every upload.
 // =============================================================================
 
-// TODO: Create a new Subject instance
-// const uploadSubject = new Subject()
+// TODO: Create a new Subject with the factory function
+// const uploadSubject = createSubject()
 
-// TODO: Create an ActivityLogObserver instance and subscribe it to the subject
-// const activityLogger = new ActivityLogObserver()
-// uploadSubject.subscribe(activityLogger)
+// TODO: Subscribe the activityLogObserver to the subject
+// uploadSubject.subscribe(activityLogObserver)
 
 const app = express()
 const PORT = 3000
