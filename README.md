@@ -1,6 +1,6 @@
 # Observer Pattern — File Upload Processing Pipeline
 
-A Node.js + TypeScript demo that implements the Observer Pattern in a realistic server-side context: a file upload processing pipeline.
+A Node.js + TypeScript demo that implements the Observer Pattern in a realistic server-side context: a file upload processing pipeline with an activity log.
 
 ## Why the Observer Pattern?
 
@@ -15,37 +15,36 @@ This decoupling means the Subject doesn't need to know _what_ its Observers do �
 
 ## What This Project Does
 
-When a file is uploaded, the upload event acts as the **Subject** and notifies a pipeline of **Observers**:
+A file upload server with two parts:
 
-- **Virus Scanner** (simulated) — checks the uploaded file
-- **Thumbnail Generator** — creates image thumbnails using Sharp
-- **Metadata Extractor** — pulls file metadata
-- **Database Logger** — logs the upload event
-- **Email Notification Sender** — notifies relevant users
+**Already provided:**
+- Express server with file upload (Multer) and JSON persistence
+- Frontend with upload form and image preview grid
+- Domain entities, value objects, and event types
 
-Each observer is independent and toggleable, demonstrating how the pattern enables loose coupling and separation of concerns.
+**Your task — add the Observer Pattern:**
+- Implement the **Subject** (subscribe, unsubscribe, notify)
+- Implement the **Activity Log Observer** that logs every upload to `data/activity.json`
+- Wire the observer into the upload handler
+- Display the activity timeline on the frontend
 
 ## Goals
 
-- Demonstrate the Observer Pattern in a real server-side scenario, not just a textbook example
+- Demonstrate the Observer Pattern in a real server-side scenario
 - Show TypeScript's value for enforcing pattern contracts via interfaces
 - Produce observable side effects (files created, logs written) so the pattern's behavior is visible
-- Support both sequential (educational) and parallel (production) observer execution
-- Allow hands-on experimentation by enabling/disabling individual observers at runtime
+
+## Prerequisites
+
+- **Node.js** >= 18
+- **npm**
 
 ## Tech Stack
 
-- **Node.js** + **TypeScript**
-- **Express** — HTTP server and file upload handling
-- **Sharp** — image thumbnail generation
+- **Express** — web server and routing
+- **Multer** — middleware for handling file uploads
+- **TypeScript** — type safety and interfaces
 - **ts-node** / **nodemon** — development tooling
-
-### What each does:
-
-- Express - Web server framework
-- Multer - Middleware for handling file uploads
-- Cors - Enable CORS for frontend access
-- @types/\* - TypeScript type definitions
 
 ## Project Structure
 
@@ -72,7 +71,7 @@ data/                               # Runtime JSON storage (gitignored)
 uploads/                            # Uploaded files (gitignored)
 docs/
   spec.md                           # Observer Pattern theory
-  todo.md                           # Step-by-step student tasks
+  todo.md                           # Step-by-step student tasks (with hints)
 ```
 
 ## Getting Started
@@ -82,6 +81,8 @@ npm install
 npm run dev    # development with auto-reload
 npm start      # single run
 ```
+
+The server will be available at **http://localhost:3000**
 
 ## Student TODO
 
@@ -109,7 +110,8 @@ Follow these steps in order. Each one maps to TODO comments and commented-out co
 
 ### 5. Verify
 - [ ] `npm run dev`, upload a file, check the file grid
-- [ ] Confirm `data/activity.json` has a log entry
+- [ ] Confirm `data/activity.json` was created with a log entry
 - [ ] Confirm the activity timeline renders on the page
+- [ ] Upload a second file and confirm the timeline updates
 
-> Full details with hints are in [docs/todo.md](docs/todo.md)
+> Full details with code hints are in [docs/todo.md](docs/todo.md)

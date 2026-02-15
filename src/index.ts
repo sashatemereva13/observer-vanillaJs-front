@@ -35,13 +35,9 @@ const app = express()
 const PORT = 3000
 
 const uploadDir = path.join(__dirname, "../uploads")
-const outputDir = path.join(__dirname, "../output")
 
 if (!fs.existsSync(uploadDir)) {
 	fs.mkdirSync(uploadDir, { recursive: true })
-}
-if (!fs.existsSync(outputDir)) {
-	fs.mkdirSync(outputDir, { recursive: true })
 }
 
 const dataFile = path.join(__dirname, "../data/files.json")
@@ -155,6 +151,5 @@ app.listen(PORT, () => {
 	console.log("║   Node.js + TypeScript + Express            ║")
 	console.log("╚══════════════════════════════════════════════╝")
 	console.log(`\n🚀 Server running at http://localhost:${PORT}`)
-	console.log(`📁 Upload directory: ${uploadDir}`)
-	console.log(`📂 Output directory: ${outputDir}\n`)
+	console.log(`📁 Upload directory: ${uploadDir}\n`)
 })
