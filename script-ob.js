@@ -35,8 +35,9 @@ const observers = []
 
 // cannot change !
 const handlePurchaseClick = () => {
-	if (observers.length === 0) alert("No observers registered yet")
+	if (observers.length === 0) return alert("No observers registered yet")
 
+	console.log("running observers ...")
 	observers.forEach((observer) => observer())
 }
 
