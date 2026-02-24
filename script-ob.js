@@ -31,7 +31,18 @@ const observerFive = () => {
 const observerSix = () => {
 	console.log("send a text to the admin")
 }
-const observers = []
+const observers = [];
+
+// function to subscribe
+const subscribe = (observer) => {
+	observers.push(observer);
+}
+
+// function to unsubscribe
+const unsubscribe = (observer) => {
+	const index = observers.indexOf(observer)
+	if (index !== -1) observers.splice(index, 1)
+}
 
 // cannot change !
 const handlePurchaseClick = () => {
@@ -46,3 +57,8 @@ const handlePurchaseClick = () => {
 purchaseButton.addEventListener("click", handlePurchaseClick)
 
 // add observers without changing handlePurchaseClick each time
+subscribe(observerOne)
+subscribe(observerTwo)
+
+subscribe(observerThree)
+unsubscribe(observerThree)
