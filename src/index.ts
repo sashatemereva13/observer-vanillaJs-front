@@ -25,10 +25,10 @@ import { activityLogObserver, getActivityLog } from "./domain/observers/Activity
 // =============================================================================
 
 // TODO: Create a new Subject with the factory function
-// const uploadSubject = createSubject()
+const uploadSubject = createSubject()
 
 // TODO: Subscribe the activityLogObserver to the subject
-// uploadSubject.subscribe(activityLogObserver)
+uploadSubject.subscribe(activityLogObserver)
 
 const app = express()
 const PORT = 3000
@@ -105,9 +105,9 @@ app.get("/files", (req: Request, res: Response) => {
 // =============================================================================
 
 // TODO: Create a GET /activity route that returns getActivityLog() as JSON
-// app.get("/activity", (req: Request, res: Response) => {
-// 	res.json(getActivityLog())
-// })
+app.get("/activity", (req: Request, res: Response) => {
+	res.json(getActivityLog())
+})
 
 app.post(
 	"/upload",
@@ -134,7 +134,7 @@ app.post(
 
 		// TODO: Notify all observers about the upload event
 		// Call uploadSubject.notify() with the event name "FileUploaded" and fileData
-		// uploadSubject.notify("FileUploaded", fileData)
+		uploadSubject.notify("FileUploaded", fileData)
 
 		res.json({
 			success: true,

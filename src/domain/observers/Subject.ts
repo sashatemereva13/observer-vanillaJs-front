@@ -32,19 +32,22 @@ export const createSubject = (): Subject => {
 	const subscribe = (observer: Observer): void => {
 		// TODO: Use emitter.on() to register the observer for EVENT_NAME
 		// Hint: emitter.on(EVENT_NAME, observer)
-		console.log("[Subject] subscribe() called — TODO: use emitter.on() to register observer")
+		emitter.on(EVENT_NAME, observer)
+		// console.log("[Subject] subscribe() called — TODO: use emitter.on() to register observer")
 	}
 
 	const unsubscribe = (observer: Observer): void => {
 		// TODO: Use emitter.off() to remove the observer for EVENT_NAME
 		// Hint: emitter.off(EVENT_NAME, observer)
-		console.log("[Subject] unsubscribe() called — TODO: use emitter.off() to remove observer")
+		emitter.off(EVENT_NAME, observer)
+		// console.log("[Subject] unsubscribe() called — TODO: use emitter.off() to remove observer")
 	}
 
 	const notify = (eventName: string, data: Record<string, unknown>): void => {
 		// TODO: Use emitter.emit() to broadcast the event to all registered observers
 		// Hint: emitter.emit(EVENT_NAME, eventName, data)
-		console.log(`[Subject] notify("${eventName}") called — TODO: use emitter.emit() to broadcast`)
+		emitter.emit(EVENT_NAME, eventName, data)
+		// console.log(`[Subject] notify("${eventName}") called — TODO: use emitter.emit() to broadcast`)
 	}
 
 	return { subscribe, unsubscribe, notify }
