@@ -11,6 +11,7 @@ const toggleButtons = [
 	document.querySelector("#toggle-observer-1"),
 	document.querySelector("#toggle-observer-2"),
 	document.querySelector("#toggle-observer-3"),
+	document.querySelector("#toggle-observer-4"),
 ]
 
 // Helper function to create delay for educational purposes
@@ -100,6 +101,13 @@ const updateStatus = () => {
 	)
 }
 
+// adding a new observer
+const sendEmail = () => {
+	console.log("email sent")
+	logActivity("observer4: sendemail() executed")
+}
+
+
 // 3. SUBSCRIPTION (The Registration)
 // We 'attach' our observers to the subject.
 // The observers array simulates the internal registry that addEventListener maintains.
@@ -107,6 +115,7 @@ const observers = [
 	{ name: "notifyUser", func: notifyUser, subscribed: true },
 	{ name: "logTransaction", func: logTransaction, subscribed: true },
 	{ name: "updateStatus", func: updateStatus, subscribed: true },
+	{name: "sendEmail", func: sendEmail, subscribed: true },
 ]
 
 console.log("📌 Registering observers to the subject...")
@@ -234,6 +243,9 @@ purchaseButton.addEventListener("click", handlePurchaseClick)
 // Example (commented out):
 // observers.splice(observers.indexOf(logTransaction), 1);
 // console.log("🗑️ Observer 2 (logTransaction) has been removed");
+
+
+
 
 // Initial console message
 console.log("🎯 Observer Pattern Demo Initialized")
